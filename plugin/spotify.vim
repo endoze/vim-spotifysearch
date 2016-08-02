@@ -114,15 +114,7 @@ function! SpotifyTrackSearch(track)
         return
     endif
     if ! has_key(s:cache.track_search, a:track)
-        python << EOL
-import spotipy
-import vim
-s = spotipy.Spotify()
-results = s.search(vim.eval("a:track"), type="track")
-results['tracks']['next'] = 'None'
-results['tracks']['previous'] = 'None'
-vim.vars['tracks'] = vim.Dictionary(results)
-EOL
+    let g:tracks = SpotTrackSearch(a:track)
     let s:cache.track_search[a:track] = g:tracks
     endif
     let tracks = s:cache.track_search[a:track]
@@ -183,15 +175,7 @@ endfunction
 
 function! ArtistLookup(artist_uri)
     if ! has_key(s:cache.artist, a:artist_uri)
-        python << EOL
-import spotipy
-import vim
-s = spotipy.Spotify()
-results = s.artist_albums(vim.eval("a:artist_uri"), album_type='album')
-results['previous'] = 'None'
-results['next'] = 'None'
-vim.vars['tracks'] = vim.Dictionary(results)
-EOL
+        let g:tracks = SpotArtistLookup(a:artist_uri)
         let s:cache.artist[a:artist_uri] = g:tracks
     endif
     let artist = s:cache.artist[a:artist_uri]
@@ -233,15 +217,7 @@ endfunction
 function! s:AlbumLookup(album_uri)
     let l:album = {}
     if ! has_key(s:cache.album, a:album_uri)
-        python << EOL
-import spotipy
-import vim
-s = spotipy.Spotify()
-results = s.album(vim.eval("a:album_uri"))
-results['tracks']['next'] = 'None'
-results['tracks']['previous'] = 'None'
-vim.vars['tracks'] = vim.Dictionary(results)
-EOL
+        let g:tracks = SpotAlbumLookup(a:album_uri)
         let s:cache.album[a:album_uri] = g:tracks
     endif
 
